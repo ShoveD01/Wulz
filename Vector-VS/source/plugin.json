@@ -1,0 +1,17 @@
+{
+  "name": "Vector VS",
+  "manufacturer": "wul",
+  "version": "0.3.0",
+  "format": "vst2",
+  "kind": "instrument",
+  "uid": "WVVS",
+  "numInputs": 0,
+  "numOutputs": 2,
+  "category": "Synth",
+  "file32": "VST/vector-vs-arm32.so",
+  "file64": "VST/vector-vs-arm64.so",
+  "description": "Vector VS: 8-voice, 4-oscillator vector-synthesis instrument with 96+ single-cycle waveforms, a 2D vector mixer and a 5-point vector envelope.",
+  "author": "wul",
+  "url": "",
+  "license": "MIT"
+}
