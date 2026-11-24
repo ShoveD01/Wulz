@@ -1,0 +1,8 @@
+{
+  "kit": "amber",
+  "pages": [
+    {"name": "VECTOR", "controls": [
+      {"param": "Vector X", "widget": "knob"}, {"param": "Vector Y", "widget": "knob"}, {"param": "Path Speed", "widget": "knob"}, {"param": "Volume", "widget": "knob"}]}
+  ],
+  "style": {"background": "ff1a1a1a"}
+}
