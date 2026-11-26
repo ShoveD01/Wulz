@@ -1,0 +1,17 @@
+{
+  "name": "ZeroCoast",
+  "manufacturer": "wul",
+  "version": "1.1.1",
+  "format": "vst2",
+  "kind": "instrument",
+  "uid": "W8gm",
+  "numInputs": 0,
+  "numOutputs": 2,
+  "category": "Synth",
+  "file32": "VST/zerocoast-arm32.so",
+  "file64": "VST/zerocoast-arm64.so",
+  "description": "ZeroCoast: a West-Coast semi-modular voice for the MPC - triangle VCO, overtone, wavefolder, slope and contour generators, vactrol low pass gate, patch matrix, clock, LFO, stepped random, quantized randomizer and 120 presets.",
+  "author": "wul",
+  "url": "",
+  "license": "MIT"
+}
