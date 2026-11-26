@@ -82,11 +82,9 @@ def all_waves():
             else:
                 p = np.arange(2048) * len(x) / 2048.0; i0 = p.astype(int); f = p - i0; user.append(x[i0] * (1 - f) + x[(i0 + 1) % len(x)] * f)
     user = [(u - u.mean()) * (0.9 / max(1e-9, np.abs(u - u.mean()).max())) for u in user]
-    rom = []
-    for fn, first in (("PROPHET_VS1.WAV", 0), ("PROPHET_VS2.WAV", 2), ("PROPHET_VS3.WAV", 1)):
-        x = read_wav(os.path.join(content, "Waves", fn))
-        if x is None or len(x) < 33 * 2048: rom = []; break
-        for s in range(first, 33): rom.append(x[s * 2048:(s + 1) * 2048])
+    # the 96 ROM waves are our own generated set; test/dump_rom.cpp writes them to assets/rom_waves.f32 (run it again if WaveBank.h changes)
+    rp = os.path.join(HERE, "assets", "rom_waves.f32")
+    rom = list(np.fromfile(rp, dtype="<f4").astype(float).reshape(96, 2048)) if os.path.isfile(rp) else []
     allw = [user[w] if w < len(user) else generate(w) for w in range(32)]
     allw += [rom[w] if len(rom) == 96 else generate(32 + w) for w in range(96)]
     allw.append(noise()); return allw, len(user)
@@ -296,7 +294,7 @@ def main():
     pill(os.path.join(OUT, "btn_clr_off.png"), 168, 64, "CLEAR", PANEL2, INK); pill(os.path.join(OUT, "btn_clr_on.png"), 168, 64, "CLEAR", (120, 90, 0), (255, 255, 255), outline=AMBER)
     pill(os.path.join(OUT, "btn_rnd_off.png"), 168, 64, "RANDOM", PANEL2, INK, dot=(60, 150, 70)); pill(os.path.join(OUT, "btn_rnd_on.png"), 168, 64, "RANDOM", PANEL2, INK, dot=(60, 150, 70))
     waves, nuser = all_waves()
-    print("make_skin: %d user wave(s) found in Content/UserWaves, %s ROM waves" % (nuser, "96" if os.path.isfile(os.path.join(HERE, "Content", "Waves", "PROPHET_VS1.WAV")) else "no"))
+    print("make_skin: %d user wave(s) found in Content/UserWaves, %s ROM waves" % (nuser, "96" if os.path.isfile(os.path.join(HERE, "assets", "rom_waves.f32")) else "no"))
     for k in range(4):
         wave_strip(os.path.join(OUT, "wave_%s_s.png" % OSCN[k]), waves, OSC[k], 124, 70); wave_strip(os.path.join(OUT, "wave_%s_l.png" % OSCN[k]), waves, OSC[k], 220, 64)
     focus = copy.deepcopy(defs["knobUni"]["componentsData"][0])

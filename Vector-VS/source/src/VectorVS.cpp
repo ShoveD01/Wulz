@@ -83,7 +83,7 @@ public:
     static mpc::PluginInfo makeInfo()
     {
         mpc::PluginInfo i;
-        i.name = "Vector VS"; i.vendor = "wul"; i.uniqueId = MPC_FOURCC('W', 'V', 'V', 'S'); i.version = 300;
+        i.name = "Vector VS"; i.vendor = "wul"; i.uniqueId = MPC_FOURCC('W', 'V', 'V', 'S'); i.version = 400;
         i.isInstrument = true; i.numInputs = 0; i.numOutputs = 2;
         return i;
     }

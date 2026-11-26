@@ -150,7 +150,7 @@ CATS = [
  (mk_strings, ["Vector Strings", "Ensemble VS", "Lush Violins", "Chamber Mist", "Orchestra Hall", "Silver Bow", "Stage Strings", "Cinema Swell"]),
  (mk_keys, ["Glass Bell", "Crystal Keys", "Tine Piano", "Soft Mallet", "Vibe Strike", "Music Box VS", "Digital Piano", "Ice Chime", "Wood Marimba", "Dream EP", "Celesta Dust", "Tubular Hit"]),
  (mk_bass, ["Sub Vector", "Rubber Bass", "Analog Floor", "Pluck Bass", "Reso Bass", "Round Sub", "Growl Bass", "Wire Bass", "Dub Weight", "Edge Bass"]),
- (mk_lead, ["Prophet Lead", "Sync Singer", "Vector Solo", "Razor Lead", "Glass Lead", "Fat Mono", "Soaring VS", "Square Lead", "Bright Line", "Wide Lead", "Pitch Rider", "Cut Through"]),
+ (mk_lead, ["Classic Lead", "Sync Singer", "Vector Solo", "Razor Lead", "Glass Lead", "Fat Mono", "Soaring VS", "Square Lead", "Bright Line", "Wide Lead", "Pitch Rider", "Cut Through"]),
  (mk_pluck, ["Pluck Pad", "Kalimba VS", "Harp Pick", "Glass Pluck", "Arp Starter", "Wire Harp", "Pizz Vector", "Short Pearl", "Spark Arp", "Bell Pluck"]),
  (mk_brass, ["Vector Brass", "Horn Section", "Soft Brass", "Stab Brass", "Swell Horns", "Warm Bone", "Brass Choir", "Tight Horn"]),
  (mk_voice, ["Vector Choir", "Ahh Pad", "Ghost Voices", "Choral Sweep", "Formant Dream", "Vowel Drift", "Monk Chant", "Air Voices"]),
