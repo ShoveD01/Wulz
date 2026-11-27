@@ -53,8 +53,15 @@ int main()
 {
     // ---- 1. wave bank: file mapping, count, fidelity of level 0, band-limiting of the other levels
     const WaveBank& wb = WaveBank::get();
-    CHECK(wb.fromFiles && wb.romLoaded == 96, "96 waves loaded from the supplied files (fromFiles=%d, %d)", (int)wb.fromFiles, wb.romLoaded);
-    {
+    { const char* e = std::getenv("VS_EXPECT_ROM"); const int want = e ? std::atoi(e) : 0; CHECK(wb.romLoaded == want && wb.fromFiles == (want == 96), "ROM waves from the user's files: %d (expected %d); generated bank fills the rest", wb.romLoaded, want); }
+    { // the generated bank: always present, finite, normalised, every wave different, each family morphs smoothly
+        double minD = 1e9; bool fin = true; double pkLo = 9, pkHi = 0; int bad = 0;
+        for (int a = 32; a < 128; ++a) { const float* x = wb.level(a, 0); float pk = 0; for (int i = 0; i < 2048; ++i) { if (!std::isfinite(x[i])) fin = false; pk = std::max(pk, std::fabs(x[i])); } pkLo = std::min(pkLo, (double)pk); pkHi = std::max(pkHi, (double)pk);
+            for (int b = a + 1; b < 128; ++b) { const float* y = wb.level(b, 0); double d = 0; for (int i = 0; i < 2048; ++i) d += std::fabs(x[i] - y[i]); d /= 2048; minD = std::min(minD, d); if (d < 0.012) { ++bad; printf("  too close: waves %d and %d (%.4f)\n", a, b, d); } } }
+        if (wb.romLoaded == 0) { CHECK(fin && pkLo > 0.3 && pkHi < 1.01, "96 generated ROM waves finite, peaks %.2f..%.2f", pkLo, pkHi); CHECK(bad == 0, "all 96 generated waves are distinct (closest pair mean difference %.3f, %d too close)", minD, bad); }
+        else CHECK(fin, "mixed bank finite");
+    }
+    if (wb.romLoaded == 96) {
         dsp::WavData f[3]; const char* nm[3] = {"Waves/PROPHET_VS1.WAV", "Waves/PROPHET_VS2.WAV", "Waves/PROPHET_VS3.WAV"};
         for (int i = 0; i < 3; ++i) CHECK(dsp::loadWav(mpc::contentPath(nm[i]), f[i]) && f[i].numFrames() == 33u * 2048, "file %d is 33 x 2048 samples", i + 1);
         auto same = [&](int a, int sa, int b, int sb) { for (int i = 0; i < 2048; ++i) if (std::fabs(f[a].channels[0][(size_t)sa * 2048 + i] - f[b].channels[0][(size_t)sb * 2048 + i]) > 1e-5f) return false; return true; };

@@ -1,8 +1,9 @@
 // WaveBank - the single-cycle wavetable store for Vector VS. By wul. SPDX-License-Identifier: MIT
 //
-//  * Loads the three supplied 44.1 kHz float WAV files (Content/Waves/PROPHET_VS1..3.WAV). Each file is 33 slots of 2048 samples and neighbouring files overlap, so
-//    the 96 distinct waves are  file 1: slots 0..32,  file 2: slots 2..32,  file 3: slots 1..32.
-//  * Wave numbering follows the Prophet VS:  0..31 = USER waves (loaded from the folder Content/UserWaves/, see below),  32..127 = the 96 ROM waves from the supplied files,
+//  * ROM waves 32..127: an ORIGINAL generated bank of 96 (eight morphing families of twelve, see generateRom). If the user owns the three 44.1 kHz float WAV files of the
+//    original ROM and puts them in Content/Waves/PROPHET_VS1..3.WAV (33 slots of 2048 samples each, neighbouring files overlap), each present file replaces its own third:
+//    file 1: slots 0..32 = waves 0..32,  file 2: slots 2..32 = waves 33..63,  file 3: slots 1..32 = waves 64..95. Those files are NOT shipped with the plugin.
+//  * Wave numbering follows the Prophet VS:  0..31 = USER waves (loaded from the folder Content/UserWaves/, see below),  32..127 = the 96 ROM waves (generated, or your own files),
 //    128 = NOISE (a fixed pseudo-random cycle).  User slots with no file behind them are filled with generated stand-ins so every wave number always sounds.
 //  * USER waves: every *.wav file in Content/UserWaves/ (sorted by name) is read, mono (first channel). A file whose length is a multiple of 2048 frames is cut into
 //    that many cycles (so one 32-cycle file fills all slots); any other length is taken as one cycle and resampled to 2048. Slots fill in order, 0, 1, 2 ... up to 31.
@@ -36,8 +37,8 @@ constexpr int kStride = kCycle + 4;    // one level, with guards: [0] = last sam
 struct WaveBank
 {
     std::vector<float> data;           // [wave][level][kStride]
-    bool fromFiles = false;            // false: the files were not found and all 128 waves are generated
-    int romLoaded = 0, userLoaded = 0;   // userLoaded: user slots filled from files
+    bool fromFiles = false;            // true only when all three original ROM files were found (otherwise the generated bank, or a mix, is used)
+    int romLoaded = 0, userLoaded = 0;   // romLoaded: ROM waves that came from the user's files (0, 33, 64, 65, 96 ...); userLoaded: user slots filled from files
 
     const float* level(int wave, int lvl) const { return data.data() + ((size_t)wave * kLevels + (size_t)lvl) * kStride + 1; }   // points at the first cycle sample
 
@@ -114,6 +115,98 @@ struct WaveBank
         for (int i = 0; i < kCycle; ++i) out[i] *= 0.9f / pk;
     }
 
+
+    // ---- the original ROM-like bank: wave r (0..95) = family r/12 (8 families), position r%12 (a smooth morph inside the family, so vector mixing between neighbours is musical)
+    static void addH(float* out, int h, double amp, double phase)
+    {
+        if (h < 1 || h > 400 || amp == 0.0) return;
+        for (int i = 0; i < kCycle; ++i) out[i] += (float)(amp * std::sin(6.283185307179586 * (double)h * (double)i / (double)kCycle + phase));
+    }
+    static void generateRom(int r, float* out)
+    {
+        const int fam = r / 12, p = r % 12; const double t = p / 11.0, PI = 3.14159265358979323846;
+        for (int i = 0; i < kCycle; ++i) out[i] = 0.0f;
+        switch (fam)
+        {
+        case 0:   // saw -> pulse of shrinking width
+        {
+            if (p == 0) { for (int h = 1; h <= 200; ++h) addH(out, h, 1.0 / h, 0.0); break; }
+            const double w = 0.5 - 0.46 * (double)(p - 1) / 10.0;
+            for (int h = 1; h <= 200; ++h) addH(out, h, std::sin(PI * h * w) / (PI * h) * 2.0, PI * 0.5 - PI * h * w);    // pulse of width w, centred
+            break;
+        }
+        case 1:   // saw, bright -> dull
+        {
+            static const double E[12] = {0.1, 0.45, 0.75, 1.15, 1.4, 1.6, 1.8, 2.0, 2.2, 2.45, 2.7, 3.0};      // spectral slope, deliberately never exactly 1 (that is the plain saw of family 0)
+            for (int h = 1; h <= 200; ++h) addH(out, h, 1.0 / std::pow((double)h, E[p]), 0.0);
+            break;
+        }
+        case 2:   // hollow: odd harmonics only, even ones fade in
+            for (int h = 1; h <= 120; ++h) addH(out, h, (h & 1) ? 1.0 / std::pow((double)h, 1.25) : 0.85 * t / (double)h, 0.0);
+            break;
+        case 3:   // vowels (formant peaks over a 130 Hz fundamental)
+        {
+            static const double F[12][3][3] = {   // freq, bandwidth, gain
+                {{700, 120, 1.0}, {1100, 150, 0.7}, {2600, 280, 0.3}}, {{550, 110, 1.0}, {1800, 200, 0.6}, {2500, 260, 0.3}}, {{270, 70, 1.0}, {2300, 240, 0.55}, {3000, 280, 0.35}},
+                {{400, 90, 1.0}, {1900, 220, 0.5}, {2600, 280, 0.3}}, {{500, 100, 1.0}, {850, 130, 0.7}, {2800, 280, 0.2}}, {{300, 80, 1.0}, {870, 110, 0.4}, {2250, 240, 0.12}},
+                {{600, 110, 1.0}, {1200, 150, 0.6}, {2500, 260, 0.25}}, {{660, 120, 1.0}, {1700, 190, 0.6}, {2400, 260, 0.3}}, {{490, 100, 1.0}, {1350, 160, 0.7}, {1700, 200, 0.5}},
+                {{570, 100, 1.0}, {840, 120, 0.6}, {2410, 260, 0.2}}, {{250, 70, 1.0}, {1750, 190, 0.6}, {2150, 230, 0.4}}, {{250, 60, 1.0}, {1000, 200, 0.3}, {2200, 300, 0.15}}};
+            for (int h = 1; h <= 70; ++h)
+            {
+                double a = 0.0; const double fr = 130.0 * h; for (int k = 0; k < 3; ++k) a += F[p][k][2] * std::exp(-std::pow((fr - F[p][k][0]) / F[p][k][1], 2.0));
+                addH(out, h, a / std::sqrt((double)h), 0.0);
+            }
+            break;
+        }
+        case 4:   // bells and metals: integer partial sets that spread and thicken along the family
+        {
+            const double spread = 1.35 + 0.16 * p; const int n = 5 + p / 2;
+            for (int j = 0; j < n; ++j) { const int h = (int)std::lround(1.0 + j * spread + (j % 2) * 0.4); addH(out, h, 1.0 / (1.0 + 0.35 * j), 0.7 * j); }
+            addH(out, 1, 0.5, 0.0);
+            break;
+        }
+        case 5:   // organs: twelve drawbar / reed registrations (harmonics 1 2 3 4 6 8 + reed buzz)
+        {
+            static const double D[12][7] = {{1, 0, 0, 0, 0, 0, 0}, {1, 1, 0, 0, 0, 0, 0}, {1, 0.8, 0.6, 0, 0, 0, 0}, {1, 0.7, 0, 0.5, 0, 0, 0}, {1, 0.5, 0.3, 0.3, 0.2, 0.1, 0}, {0.8, 1, 0.8, 0.6, 0.4, 0.2, 0},
+                                            {1, 0.6, 0.4, 0.8, 0.3, 0.5, 0}, {1, 0.4, 0.9, 0.2, 0.5, 0.1, 0.1}, {0.6, 1, 0.3, 0.9, 0.2, 0.4, 0.2}, {1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.2}, {1, 0.3, 0.7, 0.3, 0.4, 0.3, 0.5}, {0.7, 0.5, 1, 0.5, 0.8, 0.6, 0.6}};
+            static const int Hm[7] = {1, 2, 3, 4, 6, 8, 12}; for (int k = 0; k < 7; ++k) addH(out, Hm[k], D[p][k], 0.0);
+            for (int h = 5; h <= 40; ++h) if (h != 6 && h != 8 && h != 12) addH(out, h, 0.012 * p / (double)h * (h & 1 ? 1.0 : 0.5), 0.0);
+            break;
+        }
+        case 6:   // FM: phase modulation with integer ratios and a swept index
+        {
+            static const int ratio[12] = {1, 1, 2, 2, 3, 3, 2, 3, 4, 5, 3, 7}; const double idx = 0.8 + 3.6 * (double)(p % 4) / 3.0 + 0.4 * (p / 4);
+            for (int i = 0; i < kCycle; ++i) { const double ph = 6.283185307179586 * i / kCycle; out[i] = (float)(std::sin(ph + idx * std::sin(ratio[p] * ph)) + 0.35 * std::sin(2.0 * ph + 0.5 * idx * std::sin(ph))); }
+            break;
+        }
+        default:  // digital oddities
+        {
+            switch (p)
+            {
+            case 0: case 1: case 2: case 3: case 4: case 5:   // hard-sync saw sweep: slave ratio 1.5 .. 6
+            {
+                const double ratio = 1.5 + 0.9 * p;
+                for (int i = 0; i < kCycle; ++i) { double ph = ratio * i / kCycle; ph -= std::floor(ph); out[i] = (float)((2.0 * ph - 1.0) * (1.0 - 0.5 * (double)i / kCycle)); }
+                break;
+            }
+            case 6: case 7: case 8:                              // quantised saw: 3, 4, 5 bits (stair steps)
+            {
+                const double lv = (double)(1 << (3 + (p - 6)));
+                for (int i = 0; i < kCycle; ++i) out[i] = (float)(std::floor((2.0 * i / kCycle - 1.0) * lv * 0.5 + 0.5) / (lv * 0.5));
+                break;
+            }
+            case 9: for (int h = 3; h <= 60; h += 3) addH(out, h, 1.0 / std::sqrt((double)h), 0.0); addH(out, 1, 0.8, 0.0); break;        // comb on multiples of 3
+            case 10: { uint32_t x = 0x9E3779B9u; for (int h = 1; h <= 48; ++h) { x ^= x << 13; x ^= x >> 17; x ^= x << 5; addH(out, h, (0.3 + (x & 255) / 255.0) / std::pow((double)h, 0.7), (x >> 8 & 1023) / 1024.0 * 6.283); } break; }   // seeded spectrum
+            default: for (int h = 1; h <= 64; h += 2) addH(out, h, (h % 4 == 1 ? 1.0 : -0.6) / (double)h, 0.0); break;                  // odd harmonics with alternating strength
+            }
+            break;
+        }
+        }
+        double mean = 0.0; for (int i = 0; i < kCycle; ++i) mean += out[i]; mean /= kCycle; float pk = 1e-6f;
+        for (int i = 0; i < kCycle; ++i) { out[i] -= (float)mean; pk = std::fmax(pk, std::fabs(out[i])); }
+        for (int i = 0; i < kCycle; ++i) out[i] *= 0.9f / pk;
+    }
+
     static void noise(float* out)
     {
         uint32_t x = 0x1234ABCDu; float mean = 0.0f;
@@ -178,22 +271,27 @@ struct WaveBank
         }
         for (auto& w : user) normalise(w);
         userLoaded = (int)user.size();
-        // --- the 96 ROM waves
+        // --- the 96 ROM waves: generated, except for any of the user's original files that are present
         static const char* names[3] = {"Waves/PROPHET_VS1.WAV", "Waves/PROPHET_VS2.WAV", "Waves/PROPHET_VS3.WAV"};
         static const int firstSlot[3] = {0, 2, 1};
-        bool ok = true;
-        for (int f = 0; f < 3 && ok; ++f)
+        std::vector<float> g(kCycle);
+        for (int w = 0; w < kRomWaves; ++w) { generateRom(w, g.data()); rom.emplace_back(g); }
+        romLoaded = 0; int at = 0;
+        for (int f = 0; f < 3; ++f)
         {
-            dsp::WavData wd;
-            if (!dsp::loadWav(mpc::contentPath(names[f]), wd) || wd.numChannels() < 1 || wd.numFrames() < 33u * kCycle) { ok = false; break; }
-            for (int s = firstSlot[f]; s < 33; ++s) rom.emplace_back(wd.channels[0].begin() + (ptrdiff_t)((size_t)s * kCycle), wd.channels[0].begin() + (ptrdiff_t)((size_t)(s + 1) * kCycle));
+            const int count = 33 - firstSlot[f]; dsp::WavData wd;
+            if (dsp::loadWav(mpc::contentPath(names[f]), wd) && wd.numChannels() >= 1 && wd.numFrames() >= 33u * kCycle)
+            {
+                for (int s = 0; s < count; ++s) { const size_t o = (size_t)(firstSlot[f] + s) * kCycle; rom[(size_t)(at + s)].assign(wd.channels[0].begin() + (ptrdiff_t)o, wd.channels[0].begin() + (ptrdiff_t)(o + kCycle)); }
+                romLoaded += count;
+            }
+            at += count;
         }
-        if (!ok || (int)rom.size() != kRomWaves) { rom.clear(); fromFiles = false; romLoaded = 0; } else { fromFiles = true; romLoaded = kRomWaves; }
+        fromFiles = romLoaded == kRomWaves;
         // --- assemble 0..128
         std::vector<std::vector<float>> all; all.reserve(kNumWaves);
-        std::vector<float> g(kCycle);
         for (int w = 0; w < kUserWaves; ++w) { if (w < (int)user.size()) all.push_back(user[(size_t)w]); else { generate(w, g.data()); all.emplace_back(g); } }
-        for (int w = 0; w < kRomWaves; ++w) { if (fromFiles) all.push_back(rom[(size_t)w]); else { generate(kUserWaves + w, g.data()); all.emplace_back(g); } }
+        for (int w = 0; w < kRomWaves; ++w) all.push_back(rom[(size_t)w]);
         noise(g.data()); all.emplace_back(g);
         for (int w = 0; w < kNumWaves; ++w) buildWave(w, all[(size_t)w].data());
     }
