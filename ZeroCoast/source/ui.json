@@ -1,0 +1,8 @@
+{
+  "kit": "amber",
+  "pages": [
+    {"name": "MAIN", "controls": [
+      {"param": "Overtone", "widget": "knob"}, {"param": "Multiply", "widget": "knob"}, {"param": "LPG Open", "widget": "knob"}, {"param": "Volume", "widget": "knob"}]}
+  ],
+  "style": {"background": "ff0e0e0e"}
+}
