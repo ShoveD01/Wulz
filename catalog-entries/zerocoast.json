@@ -1,0 +1,21 @@
+{
+  "id": "zerocoast",
+  "name": "ZeroCoast",
+  "author": "wul",
+  "repo": "ShoveD01/Wulz",
+  "kind": "instrument",
+  "style": "synth",
+  "tags": [
+    "west-coast",
+    "semi-modular",
+    "wavefolder",
+    "lpg",
+    "mono",
+    "randomize"
+  ],
+  "license": "GPL-3.0-only",
+  "source_available": true,
+  "summary": "A West-Coast semi-modular voice: triangle VCO with linear FM, Overtone and Multiply wavefolder, Slope and Contour generators, a vactrol-style low pass gate, a patch matrix, clock, LFO, stepped random and a scale quantizer. 120 presets and randomize.",
+  "screenshot": "https://raw.githubusercontent.com/ShoveD01/Wulz/main/ZeroCoast/images/OSC.png",
+  "asset_pattern": "ZeroCoast-*-mpc-armv7.zip"
+}

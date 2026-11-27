@@ -1,0 +1,8 @@
+{
+  "kit": "amber",
+  "pages": [
+    {"name": "MAIN", "controls": [
+      {"param": "Seq Speed", "widget": "knob"}, {"param": "8-Bit Grit", "widget": "knob"}, {"param": "Tone Detune", "widget": "knob"}, {"param": "Volume", "widget": "knob"}]}
+  ],
+  "style": {"background": "ff181a1c"}
+}

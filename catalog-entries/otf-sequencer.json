@@ -1,0 +1,19 @@
+{
+  "id": "otf-sequencer",
+  "name": "OTF Sequencer",
+  "author": "wul",
+  "repo": "ShoveD01/Wulz",
+  "kind": "instrument",
+  "style": "sequencer",
+  "tags": [
+    "sequencer",
+    "performance",
+    "arpeggio",
+    "midi-out",
+    "synth"
+  ],
+  "license": "GPL-3.0-only",
+  "source_available": true,
+  "summary": "A performance step sequencer in the spirit of a pocket stylus sequencer, with its own retro synth: step pitch, gate and effects, pattern chains, 16 performance pads, loop recorder, step solo pads, randomize, and MIDI out over an ALSA port.",
+  "asset_pattern": "OTF-Sequencer-*-mpc-armv7.zip"
+}

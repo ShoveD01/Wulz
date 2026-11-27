@@ -1,0 +1,17 @@
+{
+  "name": "CheetahMS800",
+  "manufacturer": "wul",
+  "version": "1.0.0",
+  "format": "vst2",
+  "kind": "instrument",
+  "uid": "WUWO",
+  "numInputs": 0,
+  "numOutputs": 2,
+  "category": "Synth",
+  "file32": "VST/cheetahms800-arm32.so",
+  "file64": "VST/cheetahms800-arm64.so",
+  "description": "Wave-sequence digital synthesizer in the spirit of the early-90s Cheetah MS800: 15 voices, 21 gritty 8-bit waves, an 8-step wave sequencer per tone, up to 4 stacked tones, no filter, randomize, 120 presets.",
+  "author": "wul",
+  "url": "",
+  "license": "MIT"
+}

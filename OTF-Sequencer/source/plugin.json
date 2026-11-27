@@ -1,0 +1,17 @@
+{
+  "name": "OTF Sequencer",
+  "manufacturer": "wul",
+  "version": "1.2.1",
+  "format": "vst2",
+  "kind": "instrument",
+  "uid": "WY0k",
+  "numInputs": 0,
+  "numOutputs": 2,
+  "category": "Synth",
+  "file32": "VST/otf-sequencer-arm32.so",
+  "file64": "VST/otf-sequencer-arm64.so",
+  "description": "Stylophone On-The-Fly style performance sequencer: two 4-step banks, chains, directions, step effects, momentary performance modes, loop recorder, randomize and a built-in retro synth. Experimental: optional ALSA MIDI output port.",
+  "author": "wul",
+  "url": "",
+  "license": "MIT"
+}
