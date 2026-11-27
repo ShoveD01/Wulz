@@ -1,0 +1,20 @@
+{
+  "id": "vector-vs",
+  "name": "Vector VS",
+  "author": "wul",
+  "repo": "ShoveD01/Wulz",
+  "kind": "instrument",
+  "style": "synth",
+  "tags": [
+    "vector",
+    "wavetable",
+    "poly",
+    "pad",
+    "randomize"
+  ],
+  "license": "GPL-3.0-only",
+  "source_available": true,
+  "summary": "8-voice, 4-oscillator vector synth with a touch vector pad and movement recorder, 24 dB ladder filter, 5-stage envelopes, 2 LFOs with a mod matrix, ensemble chorus, 120 presets and randomize. Ships an original generated wave bank; your own ROM WAVs can be dropped in.",
+  "screenshot": "https://raw.githubusercontent.com/ShoveD01/Wulz/main/Vector-VS/images/VECTOR.png",
+  "asset_pattern": "Vector-VS-*-mpc-armv7.zip"
+}

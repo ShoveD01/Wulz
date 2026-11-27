@@ -1,0 +1,8 @@
+{
+  "kit": "amber",
+  "pages": [
+    {"name": "MAIN", "controls": [
+      {"param": "Cutoff", "widget": "knob"}, {"param": "Resonance", "widget": "knob"}, {"param": "Decay", "widget": "knob"}, {"param": "Volume", "widget": "knob"}]}
+  ],
+  "style": {"background": "ff141414"}
+}

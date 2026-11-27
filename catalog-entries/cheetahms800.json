@@ -1,0 +1,19 @@
+{
+  "id": "cheetahms800",
+  "name": "CheetahMS800",
+  "author": "wul",
+  "repo": "ShoveD01/Wulz",
+  "kind": "instrument",
+  "style": "synth",
+  "tags": [
+    "wave-sequence",
+    "digital",
+    "lo-fi",
+    "poly",
+    "randomize"
+  ],
+  "license": "GPL-3.0-only",
+  "source_available": true,
+  "summary": "A wave-sequence digital synth in the spirit of the early-90s Cheetah MS800 rack module: 15 voices with stacked tones, 21 lo-fi single-cycle waves and an 8-step wave sequence per patch. An emulation by ear, not a ROM dump.",
+  "asset_pattern": "CheetahMS800-*-mpc-armv7.zip"
+}
