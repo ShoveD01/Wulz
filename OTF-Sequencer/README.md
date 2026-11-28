@@ -4,6 +4,18 @@ A performance step sequencer in the spirit of the Stylophone On-The-Fly, with it
 
 **Requires MPC OS 3.10.1 or later, with External Plugin Support enabled** (Preferences → Enhancements (Beta) → Enable Enhancements and External Plugin Support). Copy the folder `wul - VST - OTF Sequencer` into a `VST2 Plugins` folder at the root of a drive and restart the MPC.
 
+
+## Screenshots
+Previews of the touch-screen pages, rendered from the plugin's skin files (not photos of a real MPC).
+
+![groove](images/groove.png)
+![live](images/live.png)
+![midi port](images/midi_port.png)
+![pads](images/pads.png)
+![step fx](images/step_fx.png)
+![steps](images/steps.png)
+![synth](images/synth.png)
+
 ## What it does
 - **Two 4-step banks, A (steps 1-4) and B (5-8)**: pitch (quantised to the scale), gate length and a step effect each.
 - **Step effects**: Normal, Skip, Rest, Tie, Slide, Ratchet x2/x3/x4, Random.
