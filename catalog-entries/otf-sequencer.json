@@ -15,5 +15,6 @@
   "license": "GPL-3.0-only",
   "source_available": true,
   "summary": "A performance step sequencer in the spirit of a pocket stylus sequencer, with its own retro synth: step pitch, gate and effects, pattern chains, 16 performance pads, loop recorder, step solo pads, randomize, and MIDI out over an ALSA port.",
-  "asset_pattern": "OTF-Sequencer-*-mpc-armv7.zip"
+  "asset_pattern": "OTF-Sequencer-*-mpc-armv7.zip",
+  "screenshot": "https://raw.githubusercontent.com/ShoveD01/Wulz/main/OTF-Sequencer/images/steps.png"
 }

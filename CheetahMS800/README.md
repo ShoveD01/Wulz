@@ -4,6 +4,16 @@ A wave-sequence digital synthesizer in the spirit of the early-90s Cheetah MS800
 
 **Requires MPC OS 3.10.1 or later, with External Plugin Support enabled** (Preferences → Enhancements (Beta) → Enable Enhancements and External Plugin Support). Copy the folder `wul - VST - CheetahMS800` into a `VST2 Plugins` folder at the root of a drive and restart the MPC.
 
+
+## Screenshots
+Previews of the touch-screen pages, rendered from the plugin's skin files (not photos of a real MPC).
+
+![modes](images/modes.png)
+![output](images/output.png)
+![perform](images/perform.png)
+![steps 1-4](images/steps_1-4.png)
+![steps 5-8](images/steps_5-8.png)
+
 ## Sound engine
 - **15 voices**, each with **1-4 stacked tones** (Tone Layers). Layers 2-4 are detuned (Tone Detune, cents); layers 3 and 4 can also be transposed (Layer Interval); Stereo Spread pans them. Detune also makes each layer's sequence drift slightly out of step, so stacks evolve.
 - **No filter at all.** All movement comes from the 8-step wave sequence, wave crossfades, pitch and level steps, as on the hardware.
